@@ -10,8 +10,10 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"git.teqnological.asia/teq-go/teq-echo/config"
+	"git.teqnological.asia/teq-go/teq-echo/delivery/http/book"
 	"git.teqnological.asia/teq-go/teq-echo/delivery/http/example"
 	"git.teqnological.asia/teq-go/teq-echo/delivery/http/healthcheck"
+	"git.teqnological.asia/teq-go/teq-echo/delivery/http/user"
 	"git.teqnological.asia/teq-go/teq-echo/usecase"
 )
 
@@ -43,18 +45,23 @@ func NewHTTPHandler(useCase *usecase.UseCase) *echo.Echo {
 			http.MethodPost, http.MethodDelete, http.MethodOptions,
 		},
 	}))
-
-	// Health check
-	healthcheck.Init(e.Group("/health-check"))
+	//ping - pong
+	e.GET("/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!\n")
+	})
 
 	// API docs
 	if !config.GetConfig().Stage.IsProd() {
 		e.GET("/docs/*", echoSwagger.WrapHandler)
 	}
 
+	// Health check
+	healthcheck.Init(e.Group("/health-check"))
+
 	// APIs
 	api := e.Group("/api")
+	user.Init(api.Group("/users"), useCase)
 	example.Init(api.Group("/examples"), useCase)
-
+	book.Init(api.Group("/books"), useCase)
 	return e
 }

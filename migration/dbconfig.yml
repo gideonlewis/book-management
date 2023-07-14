@@ -1,0 +1,4 @@
+development:
+  dialect: mysql
+  datasource: test.db
+  dir: /Users/quaan2hand/Desktop/workSpace/teqnological/source_code/teq-book-manage/migration

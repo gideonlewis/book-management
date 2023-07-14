@@ -7,6 +7,9 @@ local-db:
 	@docker-compose down
 	@docker-compose up -d
 
+migrate:
+	@sql-migrate new -config=/Users/quaan2hand/Desktop/workSpace/teqnological/source_code/teq-book-manage/migration/dbconfig.yml verb1
+
 proto:
 	@protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/teq.proto
 

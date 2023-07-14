@@ -64,7 +64,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: create a example
+      description: create a User
       parameters:
       - description: Example info
         in: body
@@ -81,7 +81,7 @@ paths:
             $ref: '#/definitions/presenter.ExampleResponseWrapper'
       security:
       - AuthToken: []
-      summary: Create example
+      summary: Create User
       tags:
       - Example
   /examples/{id}:

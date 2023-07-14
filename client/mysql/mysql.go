@@ -23,7 +23,7 @@ func init() {
 	)
 
 	connectionString := fmt.Sprintf(
-		"%s:%s@(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"%s:%s@(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&multiStatements=true",
 		cfg.MySQL.User,
 		cfg.MySQL.Pass,
 		cfg.MySQL.Host,

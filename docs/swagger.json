@@ -45,7 +45,7 @@
                         "AuthToken": []
                     }
                 ],
-                "description": "create a example",
+                "description": "create a User",
                 "consumes": [
                     "application/json"
                 ],
@@ -55,7 +55,7 @@
                 "tags": [
                     "Example"
                 ],
-                "summary": "Create example",
+                "summary": "Create User",
                 "parameters": [
                     {
                         "description": "Example info",
