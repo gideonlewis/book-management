@@ -19,16 +19,16 @@ func (u *UseCase) validateUpdate(ctx context.Context, req *payload.UpdateBookReq
 	myBook, err := u.BookRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrBookNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBookGet(err)
 	}
 
 	if req.Title != nil {
 		*req.Title = strings.TrimSpace(*req.Title)
 		if len(*req.Title) == 0 {
-			return nil, myerror.ErrExampleInvalidParam("Title")
+			return nil, myerror.ErrBookInvalidParam("Title")
 		}
 
 		myBook.Title = *req.Title
@@ -52,7 +52,7 @@ func (u *UseCase) Update(
 
 	err = u.BookRepo.Update(ctx, myBook)
 	if err != nil {
-		return nil, myerror.ErrExampleUpdate(err)
+		return nil, myerror.ErrBookUpdate(err)
 	}
 
 	return &presenter.BookResponseWrapper{Book: myBook}, nil

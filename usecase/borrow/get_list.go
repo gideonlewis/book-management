@@ -24,17 +24,17 @@ func (u *UseCase) GetList(
 		order = append(order, fmt.Sprintf("%s %s", req.OrderBy, req.SortBy))
 	}
 
+	if req.UserID != nil && *req.UserID > 0 {
+		conditions["user_id"] = req.UserID
+	}
+
 	if req.CreatedBy != nil && *req.CreatedBy > 0 {
 		conditions["created_by"] = req.CreatedBy
 	}
 
-	if req.UserID != nil && *req.CreatedBy > 0 {
-		conditions["user_id"] = req.UserID
-	}
-
 	myBorrows, total, err := u.BorrowRepo.GetList(ctx, req.Search, req.Paginator, conditions, order)
 	if err != nil {
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBorrowGet(err)
 	}
 
 	return &presenter.ListBorrowResponseWrapper{

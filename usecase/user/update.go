@@ -18,16 +18,16 @@ func (u *UseCase) validateUpdate(ctx context.Context, req *payload.UpdateUserReq
 	myUser, err := u.UserRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrUserNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrUserGet(err)
 	}
 
 	if req.Name != nil {
 		*req.Name = strings.TrimSpace(*req.Name)
 		if len(*req.Name) == 0 {
-			return nil, myerror.ErrExampleInvalidParam("name")
+			return nil, myerror.ErrUserInvalidParam("name")
 		}
 
 		myUser.Name = *req.Name
@@ -49,7 +49,7 @@ func (u *UseCase) Update(
 
 	err = u.UserRepo.Update(ctx, myUser)
 	if err != nil {
-		return nil, myerror.ErrExampleUpdate(err)
+		return nil, myerror.ErrUserUpdate(err)
 	}
 
 	return &presenter.UserResponseWrapper{User: myUser}, nil

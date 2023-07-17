@@ -16,10 +16,10 @@ func (u *UseCase) GetAll(ctx context.Context, req *payload.GetAllUserRequest) (*
 	myUsers, err := u.UserRepo.GetAll(ctx, req.Unscoped)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrUserNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrUserGet(err)
 	}
 
 	return &presenter.ListUserResponseWrapper{Users: myUsers}, nil

@@ -30,7 +30,7 @@ func (u *UseCase) GetList(
 
 	myUsers, total, err := u.UserRepo.GetList(ctx, req.Search, req.Paginator, conditions, order)
 	if err != nil {
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrUserGet(err)
 	}
 
 	return &presenter.ListUserResponseWrapper{

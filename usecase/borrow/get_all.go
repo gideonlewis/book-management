@@ -14,10 +14,10 @@ func (u *UseCase) GetAll(ctx context.Context, req *payload.GetAllBorrowRequest) 
 	myBorrows, err := u.BorrowRepo.GetAll(ctx, req.Unscoped)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrBorrowNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBorrowGet(err)
 	}
 
 	return &presenter.ListBorrowResponseWrapper{Borrows: myBorrows}, nil

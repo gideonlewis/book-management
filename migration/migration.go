@@ -16,7 +16,7 @@ func Up(db *gorm.DB) {
 		teqlogger.GetLogger().Fatal(err.Error())
 	}
 	migrations := &migrate.FileMigrationSource{
-		Dir: "/Users/quaan2hand/Desktop/workSpace/teqnological/source_code/teq-book-manage/migration",
+		Dir: "./migration",
 	}
 
 	n, err := migrate.Exec(getDB, "mysql", migrations, migrate.Up)

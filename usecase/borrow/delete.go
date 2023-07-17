@@ -14,15 +14,15 @@ func (u *UseCase) Delete(ctx context.Context, req *payload.DeleteBorrowRequest) 
 	myBorrow, err := u.BorrowRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return myerror.ErrExampleNotFound()
+			return myerror.ErrBorrowNotFound()
 		}
 
-		return myerror.ErrExampleGet(err)
+		return myerror.ErrBorrowGet(err)
 	}
 
 	err = u.BorrowRepo.Delete(ctx, myBorrow, false)
 	if err != nil {
-		return myerror.ErrExampleDelete(err)
+		return myerror.ErrBorrowDelete(err)
 	}
 
 	return nil

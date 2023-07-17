@@ -14,10 +14,10 @@ func (u *UseCase) GetAll(ctx context.Context, req *payload.GetAllBookRequest) (*
 	myBooks, err := u.BookRepo.GetAll(ctx, req.Unscoped)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrBookNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBookGet(err)
 	}
 
 	return &presenter.ListBookResponseWrapper{Books: myBooks}, nil

@@ -14,15 +14,15 @@ func (u *UseCase) Delete(ctx context.Context, req *payload.DeleteBookRequest) er
 	myBook, err := u.BookRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return myerror.ErrExampleNotFound()
+			return myerror.ErrBookNotFound()
 		}
 
-		return myerror.ErrExampleGet(err)
+		return myerror.ErrBookGet(err)
 	}
 
 	err = u.BookRepo.Delete(ctx, myBook, false)
 	if err != nil {
-		return myerror.ErrExampleDelete(err)
+		return myerror.ErrBookDelete(err)
 	}
 
 	return nil

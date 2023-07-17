@@ -17,10 +17,10 @@ func (u *UseCase) GetByID(ctx context.Context, req *payload.GetBorrowByIDRequest
 	myBorrow, err := u.BorrowRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrBorrowNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBorrowGet(err)
 	}
 
 	return &presenter.BorrowResponseWrapper{Borrow: myBorrow}, nil

@@ -2,7 +2,8 @@ package user
 
 import (
 	"context"
-	"fmt"
+	"errors"
+	"regexp"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -18,6 +19,27 @@ type pgRepository struct {
 }
 
 func (p *pgRepository) Create(ctx context.Context, data *model.User) error {
+	var errMap = make(map[string]string)
+	if !checkEmailDomain(data.Email) {
+		errMap["email-domain"] = "Email must be a valid domain: @teqnological.asia | @gmail.com"
+	}
+
+	if isEmailExisted(p.getDB(ctx), data.Email) {
+		errMap["email-existed"] = "Email already existed,please try email different"
+	}
+
+	if isUsernameExisted(p.getDB(ctx), data.UserName) {
+		errMap["user-name"] = "Username already exists,please try user_name different"
+	}
+
+	if len(errMap) != 0 {
+		var errStr string
+		for _, v := range errMap {
+			errStr += v + ". "
+		}
+		return errors.New(errStr)
+	}
+
 	return p.getDB(ctx).Create(data).Error
 }
 
@@ -30,7 +52,7 @@ func (p *pgRepository) GetByID(ctx context.Context, id int64) (*model.User, erro
 
 	err := p.getDB(ctx).
 		Where("id = ?", id).
-		First(&user).
+		Find(&user).
 		Error
 
 	if err != nil {
@@ -53,8 +75,6 @@ func (p *pgRepository) GetList(
 		total  int64
 		offset int
 	)
-
-	fmt.Println("Here is the")
 
 	if conditions != nil {
 		db = db.Where(conditions)
@@ -115,5 +135,56 @@ func (p *pgRepository) Delete(ctx context.Context, data *model.User, unscoped bo
 		db = db.Unscoped()
 	}
 
+	// delete borrow relationship (created_by && user_id)
+	if err := deleteRelationshipBorrow(db, data.ID); err != nil {
+		return err
+	}
+	// update available_quantity
 	return db.Delete(&data).Error
+}
+
+func deleteRelationshipBorrow(db *gorm.DB, userID int64) error {
+	var borrows []model.Borrow
+	if err := db.Where("user_id = ? || created_by = ?", userID, userID).Find(&borrows).Error; err != nil {
+		return err
+	}
+
+	if err := db.Delete(&borrows).Error; err != nil {
+		return err
+	}
+
+	for _, borrow := range borrows {
+		if err := updateAvailableQuantity(db, borrow.BookID); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func updateAvailableQuantity(db *gorm.DB, bookID int64) error {
+	if err := db.Table("books").Where("id = ?", bookID).UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", 1)).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkEmailDomain(email string) bool {
+	pattern := `^[a-zA-Z0-9_.+-]+@(teqnological\.asia|gmail\.com)$`
+	match, _ := regexp.MatchString(pattern, email)
+
+	return match
+}
+
+func isUsernameExisted(db *gorm.DB, username string) bool {
+	var count int64
+	db.Table("users").Where("user_name = ?", username).Count(&count)
+	return count > 0
+}
+
+func isEmailExisted(db *gorm.DB, email string) bool {
+	var count int64
+	db.Table("users").Where("email = ?", email).Count(&count)
+	return count > 0
 }

@@ -15,10 +15,10 @@ func (u *UseCase) GetByID(ctx context.Context, req *payload.GetBookByIDRequest) 
 	myBook, err := u.BookRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrBookNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBookGet(err)
 	}
 
 	return &presenter.BookResponseWrapper{Book: myBook}, nil

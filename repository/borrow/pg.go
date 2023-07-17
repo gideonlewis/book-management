@@ -2,7 +2,9 @@ package borrow
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -18,8 +20,49 @@ type pgRepository struct {
 }
 
 func (p *pgRepository) Create(ctx context.Context, data *model.Borrow) error {
-	fmt.Println("data: ", data)
-	return p.getDB(ctx).Create(data).Error
+	var bookCurr *model.Book
+	result := p.getDB(ctx).Transaction(func(tx *gorm.DB) error {
+		// check quantity user is borrowed
+		var borrowings []model.Borrow
+		if err := tx.Where("user_id = ? AND return_date IS NULL", data.UserID).Find(&borrowings).Error; err != nil {
+			return err
+		}
+		if len(borrowings) >= 3 {
+			return errors.New("người dùng đã mượn đủ số lượng sách tối đa (3 cuốn)")
+		}
+		// check available_quantity
+		if err := tx.Where("id = ?", data.BookID).First(&bookCurr).Error; err != nil {
+			return err
+		}
+		if bookCurr.AvailableQuantity <= 0 {
+			return errors.New("trong kho đã hết sách này")
+		}
+		// check overdue
+		for _, borrowing := range borrowings {
+			// Kiểm tra nếu đã quá 2 tuần từ ngày mượn
+			if time.Now().Sub(borrowing.BorrowDate).Hours() > 14*24 {
+				return errors.New("bạn có sách quá hạn trả, vui lòng trả sách trước khi mượn tiếp")
+			}
+		}
+
+		return nil
+	})
+
+	if result != nil {
+		err := fmt.Sprintf("Không thể mượn sách:%s", result)
+		return errors.New(err)
+	}
+
+	if err := p.getDB(ctx).Create(data).Error; err != nil {
+		return err
+	}
+
+	// update available_quantity
+	if err := p.getDB(ctx).Table("books").Where("id = ?", data.BookID).UpdateColumn("available_quantity", bookCurr.AvailableQuantity-1).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *pgRepository) Update(ctx context.Context, data *model.Borrow) error {

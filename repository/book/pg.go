@@ -2,7 +2,7 @@ package book
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -18,7 +18,36 @@ type pgRepository struct {
 }
 
 func (p *pgRepository) Create(ctx context.Context, data *model.Book) error {
-	return p.getDB(ctx).Create(data).Error
+	// check exist
+	result := p.getDB(ctx).Transaction(func(tx *gorm.DB) error {
+		var book model.Book
+		if err := tx.Where("title = ?", data.Title).First(&book).Error; err != nil {
+			// not exist -> create
+			data.TotalQuantity = 1
+			data.AvailableQuantity = 1
+			return p.getDB(ctx).Create(data).Error
+		} else {
+			// existed -> update total_quantity, available_quantity
+			if err := tx.Model(&book).UpdateColumns(model.Book{
+				Author:            data.Author,
+				Price:             data.Price,
+				TotalQuantity:     book.TotalQuantity + 1,
+				AvailableQuantity: book.AvailableQuantity + 1,
+			}).Error; err != nil {
+				return err
+			}
+		}
+
+		*data = book
+
+		return nil
+	})
+
+	if result != nil {
+		return result
+	}
+
+	return nil
 }
 
 func (p *pgRepository) Update(ctx context.Context, data *model.Book) error {
@@ -48,7 +77,6 @@ func (p *pgRepository) GetList(
 	order []string,
 ) ([]model.Book, int64, error) {
 
-	fmt.Println("Get list of")
 	var (
 		db     = p.getDB(ctx).Model(&model.Book{})
 		data   = make([]model.Book, 0)
@@ -92,7 +120,6 @@ func (p *pgRepository) GetList(
 }
 
 func (p *pgRepository) GetAll(ctx context.Context, unscoped bool) ([]model.Book, error) {
-	fmt.Println("Unscoped: ", unscoped)
 	var (
 		books []model.Book
 		db    = p.getDB(ctx)
@@ -116,5 +143,25 @@ func (p *pgRepository) Delete(ctx context.Context, data *model.Book, unscoped bo
 		db = db.Unscoped()
 	}
 
+	if err := checkBookBorrowing(db, data.ID); err != nil {
+		return err
+	}
+
+	// check book is borrowing by any user
 	return db.Delete(&data).Error
+}
+
+// func updateBor
+
+func checkBookBorrowing(db *gorm.DB, bookID int64) error {
+	var borrows []model.Borrow
+	if err := db.Where("book_id = ?", bookID).Find(&borrows).Error; err != nil {
+		return err
+	}
+
+	if len(borrows) != 0 {
+		return errors.New("can't delete because have any user is borrowing")
+	}
+
+	return nil
 }

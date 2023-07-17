@@ -14,15 +14,15 @@ func (u *UseCase) Delete(ctx context.Context, req *payload.DeleteUserRequest) er
 	myUser, err := u.UserRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return myerror.ErrExampleNotFound()
+			return myerror.ErrUserNotFound()
 		}
 
-		return myerror.ErrExampleGet(err)
+		return myerror.ErrUserGet(err)
 	}
 
 	err = u.UserRepo.Delete(ctx, myUser, false)
 	if err != nil {
-		return myerror.ErrExampleDelete(err)
+		return myerror.ErrUserDelete(err)
 	}
 
 	return nil

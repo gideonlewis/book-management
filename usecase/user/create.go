@@ -2,30 +2,25 @@ package user
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
-	"git.teqnological.asia/teq-go/teq-echo/client/mysql"
 	"git.teqnological.asia/teq-go/teq-echo/model"
 	"git.teqnological.asia/teq-go/teq-echo/payload"
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 	"git.teqnological.asia/teq-go/teq-echo/util/myerror"
-	"gorm.io/gorm"
 )
 
 const DAY_STANDARD = "2006-01-02T15:04:05Z07:00"
 
 func (u *UseCase) validateCreate(req *payload.CreateUserRequest) error {
 	if req.Name == nil {
-		return myerror.ErrExampleInvalidParam("name")
+		return myerror.ErrUserInvalidParam("name")
 	}
 
 	*req.Name = strings.TrimSpace(*req.Name)
 	if len(*req.Name) == 0 {
-		return myerror.ErrExampleInvalidParam("name")
+		return myerror.ErrUserInvalidParam("name")
 	}
 
 	return nil
@@ -41,20 +36,7 @@ func (u *UseCase) Create(
 
 	joinDate, err := checkJoinDate(req.JoinDate)
 	if err != nil {
-		return nil, myerror.ErrExampleCreate(err)
-	}
-
-	fmt.Println(checkEmail(*req.Email))
-	if !checkEmail(*req.Email) {
-		return &presenter.UserResponseWrapper{User: &model.User{}}, myerror.ErrExampleCreate(errors.New("invalid email"))
-	}
-
-	if isEmailExists(mysql.GetDB(), *req.Email) {
-		return &presenter.UserResponseWrapper{User: &model.User{}}, myerror.ErrExampleCreate(errors.New("email already exists"))
-	}
-
-	if isUsernameExists(mysql.GetDB(), *req.UserName) {
-		return &presenter.UserResponseWrapper{User: &model.User{}}, myerror.ErrExampleCreate(errors.New("user_name already exists"))
+		return nil, myerror.ErrUserCreate(err)
 	}
 
 	myUser := &model.User{
@@ -69,29 +51,10 @@ func (u *UseCase) Create(
 
 	err = u.UserRepo.Create(ctx, myUser)
 	if err != nil {
-		return nil, myerror.ErrExampleCreate(err)
+		return nil, myerror.ErrUserCreate(err)
 	}
 
 	return &presenter.UserResponseWrapper{User: myUser}, nil
-}
-
-func checkEmail(email string) bool {
-	pattern := `^[a-zA-Z0-9_.+-]+@(teqnological\.asia|gmail\.com)$`
-	match, _ := regexp.MatchString(pattern, email)
-
-	return match
-}
-
-func isUsernameExists(db *gorm.DB, username string) bool {
-	var count int64
-	db.Table("users").Where("user_name = ?", username).Count(&count)
-	return count > 0
-}
-
-func isEmailExists(db *gorm.DB, email string) bool {
-	var count int64
-	db.Table("users").Where("email = ?", email).Count(&count)
-	return count > 0
 }
 
 func checkJoinDate(joinDate *string) (time.Time, error) {

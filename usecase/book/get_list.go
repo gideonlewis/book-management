@@ -30,7 +30,7 @@ func (u *UseCase) GetList(
 
 	myBooks, total, err := u.BookRepo.GetList(ctx, req.Search, req.Paginator, conditions, order)
 	if err != nil {
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBookGet(err)
 	}
 
 	return &presenter.ListBookResponseWrapper{

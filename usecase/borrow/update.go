@@ -17,14 +17,14 @@ func (u *UseCase) validateUpdate(ctx context.Context, req *payload.UpdateBorrowR
 	myBorrow, err := u.BorrowRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrExampleNotFound()
+			return nil, myerror.ErrBorrowNotFound()
 		}
 
-		return nil, myerror.ErrExampleGet(err)
+		return nil, myerror.ErrBorrowGet(err)
 	}
 
 	if req.UserID != nil && req.BookID != nil && req.BorrowDate != nil {
-		return nil, myerror.ErrExampleInvalidParam("Invalid input")
+		return nil, myerror.ErrBorrowInvalidParam("Invalid input")
 	}
 
 	myBorrow.UserID = *req.UserID
@@ -45,7 +45,7 @@ func (u *UseCase) Update(
 
 	err = u.BorrowRepo.Update(ctx, myBorrow)
 	if err != nil {
-		return nil, myerror.ErrExampleUpdate(err)
+		return nil, myerror.ErrBorrowUpdate(err)
 	}
 
 	return &presenter.BorrowResponseWrapper{Borrow: myBorrow}, nil
