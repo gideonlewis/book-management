@@ -2,6 +2,7 @@ package borrow
 
 import (
 	"context"
+	"fmt"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -17,6 +18,7 @@ type pgRepository struct {
 }
 
 func (p *pgRepository) Create(ctx context.Context, data *model.Borrow) error {
+	fmt.Println("data: ", data)
 	return p.getDB(ctx).Create(data).Error
 }
 
@@ -53,12 +55,13 @@ func (p *pgRepository) GetList(
 		offset int
 	)
 
+	fmt.Println(conditions)
 	if conditions != nil {
 		db = db.Where(conditions)
 	}
 
 	if search != "" {
-		db.Where("name LIKE ?", "%"+search+"%")
+		db.Where("title LIKE ?", "%"+search+"%")
 	}
 
 	for i := range order {

@@ -1,6 +1,8 @@
 package user
 
 import (
+	"fmt"
+
 	"git.teqnological.asia/teq-go/teq-pkg/teq"
 	"git.teqnological.asia/teq-go/teq-pkg/teqerror"
 	"github.com/labstack/echo/v4"
@@ -21,7 +23,7 @@ import (
 func (r *Route) GetAll(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}
-		req  = payload.GetListUserRequest{}
+		req  = payload.GetAllUserRequest{}
 		resp *presenter.ListUserResponseWrapper
 	)
 
@@ -29,7 +31,9 @@ func (r *Route) GetAll(c echo.Context) error {
 		return teq.Response.Error(ctx, teqerror.ErrInvalidParams(err))
 	}
 
-	resp, err := r.UseCase.User.GetList(ctx, &req)
+	fmt.Println("Unscoped: ", req.Unscoped)
+	fmt.Println("Un: ", req.Un)
+	resp, err := r.UseCase.User.GetAll(ctx, &req)
 	if err != nil {
 		return teq.Response.Error(c, err.(teqerror.TeqError))
 	}

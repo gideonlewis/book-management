@@ -21,6 +21,8 @@ type Repository struct {
 func New(getClient func(ctx context.Context) *gorm.DB) *Repository {
 	return &Repository{
 		User:    user.NewPG(getClient),
+		Book:    book.NewPG(getClient),
+		Borrow:  borrow.NewPG(getClient),
 		Example: example.NewPG(getClient),
 	}
 }

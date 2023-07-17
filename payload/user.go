@@ -12,6 +12,7 @@ type CreateUserRequest struct {
 	Email    *string `json:"email"`
 	Gender   *string `json:"gender"`
 	Team     *string `json:"team"`
+	JoinDate *string `json:"join_date"`
 }
 
 type GetUserByIDRequest struct {
@@ -44,7 +45,8 @@ func (g *GetListUserRequest) Format() {
 }
 
 type GetAllUserRequest struct {
-	Unscoped bool `json:"unscoped"`
+	Unscoped bool   `json:"unscoped"`
+	Un       string `json:"un"`
 }
 
 type UpdateUserRequest struct {

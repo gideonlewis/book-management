@@ -89,6 +89,8 @@ func executeServer(useCase *usecase.UseCase, client func(ctx context.Context) *g
 	migration.Up(client(context.Background()))
 
 	// cronjob
+	job.New().Run()
+
 	if len(cfg.HealthCheck.HealthCheckEndPoint) > 0 {
 		job.New().Run()
 	}

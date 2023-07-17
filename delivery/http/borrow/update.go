@@ -1,4 +1,4 @@
-package book
+package borrow
 
 import (
 	"strconv"
@@ -11,21 +11,22 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// GetByID example by id
-// @Summary Get an example
-// @Description Get example by id
-// @Tags Example
+// Update Borrow by id
+// @Summary Update an Borrow
+// @Description Update Borrow by id
+// @Tags Borrow
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Param id path int true "id"
-// @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples/{id} [get] .
-func (r *Route) GetByID(c echo.Context) error {
+// @Param req body payload.UpdateBorrowRequest true "Borrow info"
+// @Success 200 {object} presenter.BorrowResponseWrapper
+// @Router /Borrows/{id} [put] .
+func (r *Route) Update(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}
 		idStr = c.Param("id")
-		resp  *presenter.BookResponseWrapper
+		resp  *presenter.BorrowResponseWrapper
 	)
 
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -33,7 +34,15 @@ func (r *Route) GetByID(c echo.Context) error {
 		return teq.Response.Error(ctx, teqerror.ErrInvalidParams(err))
 	}
 
-	resp, err = r.UseCase.Book.GetByID(ctx, &payload.GetBookByIDRequest{ID: id})
+	req := payload.UpdateBorrowRequest{
+		ID: id,
+	}
+
+	if err = c.Bind(&req); err != nil {
+		return teq.Response.Error(ctx, teqerror.ErrInvalidParams(err))
+	}
+
+	resp, err = r.UseCase.Borrow.Update(ctx, &req)
 	if err != nil {
 		return teq.Response.Error(c, err.(teqerror.TeqError))
 	}

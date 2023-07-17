@@ -7,7 +7,7 @@ import (
 )
 
 type CreateBookRequest struct {
-	Name   *string `json:"name"`
+	Title  *string `json:"title"`
 	Author *string `json:"author"`
 	Price  *int64  `json:"price"`
 }
@@ -46,8 +46,10 @@ type GetAllBookRequest struct {
 }
 
 type UpdateBookRequest struct {
-	ID   int64   `json:"-"`
-	Name *string `json:"name"`
+	ID     int64   `json:"-"`
+	Title  *string `json:"title"`
+	Author *string `json:"author"`
+	Price  *int64  `json:"price"`
 }
 
 type DeleteBookRequest struct {

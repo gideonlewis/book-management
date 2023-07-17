@@ -3,7 +3,7 @@ package book
 import (
 	"git.teqnological.asia/teq-go/teq-echo/config"
 	"git.teqnological.asia/teq-go/teq-echo/repository"
-	"git.teqnological.asia/teq-go/teq-echo/repository/book"
+	book "git.teqnological.asia/teq-go/teq-echo/repository/book"
 	mySES "git.teqnological.asia/teq-go/teq-echo/util/ses"
 )
 

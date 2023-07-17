@@ -2,6 +2,7 @@ package book
 
 import (
 	"context"
+	"fmt"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -46,6 +47,8 @@ func (p *pgRepository) GetList(
 	conditions interface{},
 	order []string,
 ) ([]model.Book, int64, error) {
+
+	fmt.Println("Get list of")
 	var (
 		db     = p.getDB(ctx).Model(&model.Book{})
 		data   = make([]model.Book, 0)
@@ -89,6 +92,7 @@ func (p *pgRepository) GetList(
 }
 
 func (p *pgRepository) GetAll(ctx context.Context, unscoped bool) ([]model.Book, error) {
+	fmt.Println("Unscoped: ", unscoped)
 	var (
 		books []model.Book
 		db    = p.getDB(ctx)

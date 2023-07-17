@@ -63,3 +63,7 @@ func GetClient(ctx context.Context) *gorm.DB {
 
 	return db.Session(&gorm.Session{})
 }
+
+func GetDB() *gorm.DB {
+	return db
+}

@@ -28,6 +28,10 @@ func (u *UseCase) GetList(
 		conditions["created_by"] = req.CreatedBy
 	}
 
+	if req.UserID != nil && *req.CreatedBy > 0 {
+		conditions["user_id"] = req.UserID
+	}
+
 	myBorrows, total, err := u.BorrowRepo.GetList(ctx, req.Search, req.Paginator, conditions, order)
 	if err != nil {
 		return nil, myerror.ErrExampleGet(err)

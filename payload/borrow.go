@@ -7,20 +7,22 @@ import (
 )
 
 type CreateBorrowRequest struct {
-	Name *string `json:"name"`
+	UserID *int64 `json:"user_id"`
+	BookID *int64 `json:"book_id"`
 }
 
 type GetBorrowByIDRequest struct {
 	ID int64 `json:"-"`
 }
 
-var orderByBorrow = []string{"id", "name", "created_by", "updated_by"}
+var orderByBorrow = []string{"id", "title", "user_id", "created_by", "updated_by"}
 
 type GetListBorrowRequest struct {
 	codetype.Paginator
 	SortBy    codetype.SortType `json:"sort_by,omitempty" query:"sort_by"`
 	OrderBy   string            `json:"order_by,omitempty" query:"order_by"`
 	Search    string            `json:"search,omitempty" query:"search"`
+	UserID    *int64            `json:"user_id,omitempty" query:"user_id"`
 	CreatedBy *int64            `json:"created_by,omitempty" query:"created_by"`
 }
 
@@ -44,8 +46,10 @@ type GetAllBorrowRequest struct {
 }
 
 type UpdateBorrowRequest struct {
-	ID   int64   `json:"-"`
-	Name *string `json:"name"`
+	ID         int64   `json:"-"`
+	UserID     *int64  `json:"user_id"`
+	BookID     *int64  `json:"book_id"`
+	BorrowDate *string `json:"borrower_date"`
 }
 
 type DeleteBorrowRequest struct {

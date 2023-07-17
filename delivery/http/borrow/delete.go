@@ -1,4 +1,4 @@
-package book
+package borrow
 
 import (
 	"strconv"
@@ -8,24 +8,22 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"git.teqnological.asia/teq-go/teq-echo/payload"
-	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// GetByID example by id
-// @Summary Get an example
-// @Description Get example by id
-// @Tags Example
+// Delete Borrow by id
+// @Summary Delete an Borrow
+// @Description Delete Borrow by id
+// @Tags Borrow
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Param id path int true "id"
-// @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples/{id} [get] .
-func (r *Route) GetByID(c echo.Context) error {
+// @Success 200
+// @Router /Borrows/{id} [delete] .
+func (r *Route) Delete(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}
 		idStr = c.Param("id")
-		resp  *presenter.BookResponseWrapper
 	)
 
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -33,10 +31,10 @@ func (r *Route) GetByID(c echo.Context) error {
 		return teq.Response.Error(ctx, teqerror.ErrInvalidParams(err))
 	}
 
-	resp, err = r.UseCase.Book.GetByID(ctx, &payload.GetBookByIDRequest{ID: id})
+	err = r.UseCase.Borrow.Delete(ctx, &payload.DeleteBorrowRequest{ID: id})
 	if err != nil {
 		return teq.Response.Error(c, err.(teqerror.TeqError))
 	}
 
-	return teq.Response.Success(c, resp)
+	return teq.Response.Success(c, nil)
 }

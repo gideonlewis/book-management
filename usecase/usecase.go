@@ -30,6 +30,8 @@ func New(repo *repository.Repository) *UseCase {
 
 	return &UseCase{
 		User:    user.New(repo, ses),
+		Book:    book.New(repo, ses),
+		Borrow:  borrow.New(repo, ses),
 		Example: example.New(repo, ses),
 		GRPC:    grpc.New(repo),
 		SES:     ses,

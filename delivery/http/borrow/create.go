@@ -1,8 +1,6 @@
-package book
+package borrow
 
 import (
-	"strconv"
-
 	"git.teqnological.asia/teq-go/teq-pkg/teq"
 	"git.teqnological.asia/teq-go/teq-pkg/teqerror"
 	"github.com/labstack/echo/v4"
@@ -11,29 +9,27 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// GetByID example by id
-// @Summary Get an example
-// @Description Get example by id
+// Create Borrow
+// @Summary Create Borrow
+// @Description create a Borrow
 // @Tags Example
-// @Accept json
+// @Accept  json
 // @Produce json
 // @Security AuthToken
-// @Param id path int true "id"
+// @Param req body payload.CreateExampleRequest true "Example info"
 // @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples/{id} [get] .
-func (r *Route) GetByID(c echo.Context) error {
+// @Router /examples [post] .
+func (r *Route) Create(c echo.Context) error {
 	var (
-		ctx   = &teq.CustomEchoContext{Context: c}
-		idStr = c.Param("id")
-		resp  *presenter.BookResponseWrapper
+		ctx  = &teq.CustomEchoContext{Context: c}
+		req  = payload.CreateBorrowRequest{}
+		resp *presenter.BorrowResponseWrapper
 	)
-
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
+	if err := c.Bind(&req); err != nil {
 		return teq.Response.Error(ctx, teqerror.ErrInvalidParams(err))
 	}
 
-	resp, err = r.UseCase.Book.GetByID(ctx, &payload.GetBookByIDRequest{ID: id})
+	resp, err := r.UseCase.Borrow.Create(ctx, &req)
 	if err != nil {
 		return teq.Response.Error(c, err.(teqerror.TeqError))
 	}

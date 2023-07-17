@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -52,6 +53,8 @@ func (p *pgRepository) GetList(
 		total  int64
 		offset int
 	)
+
+	fmt.Println("Here is the")
 
 	if conditions != nil {
 		db = db.Where(conditions)

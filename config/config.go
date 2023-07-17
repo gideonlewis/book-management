@@ -50,6 +50,7 @@ type Config struct {
 
 	SentryDSN      string `envconfig:"SENTRY_DSN"`
 	TokenSecretKey string `envconfig:"TOKEN_SECRET_KEY"`
+	API_KEY        string `envconfig:"API_KEY"`
 }
 
 func init() {

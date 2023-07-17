@@ -2,6 +2,7 @@ package book
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"git.teqnological.asia/teq-go/teq-pkg/teq"
@@ -24,17 +25,19 @@ func (u *UseCase) validateUpdate(ctx context.Context, req *payload.UpdateBookReq
 		return nil, myerror.ErrExampleGet(err)
 	}
 
-	if req.Name != nil {
-		*req.Name = strings.TrimSpace(*req.Name)
-		if len(*req.Name) == 0 {
-			return nil, myerror.ErrExampleInvalidParam("name")
+	if req.Title != nil {
+		*req.Title = strings.TrimSpace(*req.Title)
+		if len(*req.Title) == 0 {
+			return nil, myerror.ErrExampleInvalidParam("Title")
 		}
 
-		myBook.Name = *req.Name
+		myBook.Title = *req.Title
+		myBook.Author = *req.Author
+		myBook.Price = *req.Price
 	}
 
 	myBook.UpdatedBy = teq.Int64(1)
-
+	fmt.Println(myBook)
 	return myBook, nil
 }
 

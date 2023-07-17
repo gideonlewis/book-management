@@ -1,4 +1,4 @@
-package book
+package borrow
 
 import (
 	"strconv"
@@ -25,7 +25,7 @@ func (r *Route) GetByID(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}
 		idStr = c.Param("id")
-		resp  *presenter.BookResponseWrapper
+		resp  *presenter.BorrowResponseWrapper
 	)
 
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -33,7 +33,7 @@ func (r *Route) GetByID(c echo.Context) error {
 		return teq.Response.Error(ctx, teqerror.ErrInvalidParams(err))
 	}
 
-	resp, err = r.UseCase.Book.GetByID(ctx, &payload.GetBookByIDRequest{ID: id})
+	resp, err = r.UseCase.Borrow.GetByID(ctx, &payload.GetBorrowByIDRequest{ID: id})
 	if err != nil {
 		return teq.Response.Error(c, err.(teqerror.TeqError))
 	}

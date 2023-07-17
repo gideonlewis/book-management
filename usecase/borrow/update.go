@@ -2,7 +2,6 @@ package borrow
 
 import (
 	"context"
-	"strings"
 
 	"git.teqnological.asia/teq-go/teq-pkg/teq"
 	"github.com/pkg/errors"
@@ -24,15 +23,12 @@ func (u *UseCase) validateUpdate(ctx context.Context, req *payload.UpdateBorrowR
 		return nil, myerror.ErrExampleGet(err)
 	}
 
-	if req.Name != nil {
-		*req.Name = strings.TrimSpace(*req.Name)
-		if len(*req.Name) == 0 {
-			return nil, myerror.ErrExampleInvalidParam("name")
-		}
-
-		myBorrow.Name = *req.Name
+	if req.UserID != nil && req.BookID != nil && req.BorrowDate != nil {
+		return nil, myerror.ErrExampleInvalidParam("Invalid input")
 	}
 
+	myBorrow.UserID = *req.UserID
+	myBorrow.BookID = *req.BookID
 	myBorrow.UpdatedBy = teq.Int64(1)
 
 	return myBorrow, nil

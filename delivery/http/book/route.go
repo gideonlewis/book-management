@@ -1,6 +1,8 @@
 package book
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 
 	"git.teqnological.asia/teq-go/teq-echo/usecase"
@@ -12,6 +14,10 @@ type Route struct {
 
 func Init(group *echo.Group, useCase *usecase.UseCase) {
 	r := &Route{UseCase: useCase}
+
+	group.GET("/check", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Starting!\n")
+	})
 
 	group.POST("", r.Create)
 	group.GET("", r.GetList)

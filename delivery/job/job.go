@@ -1,6 +1,10 @@
 package job
 
-import "git.teqnological.asia/teq-go/teq-echo/config"
+import (
+	"fmt"
+
+	"git.teqnological.asia/teq-go/teq-echo/config"
+)
 
 type IJob interface {
 	Run()
@@ -9,6 +13,7 @@ type IJob interface {
 type Jobs []IJob
 
 func (js Jobs) Run() {
+	fmt.Println("Running jobs...")
 	for _, j := range js {
 		go j.Run()
 	}
@@ -16,6 +21,7 @@ func (js Jobs) Run() {
 
 func New() Jobs {
 	return Jobs{
+		NewBorrowingOverdueCheck(),
 		NewHealthChecks(config.GetConfig().HealthCheck.HealthCheckEndPoint),
 	}
 }

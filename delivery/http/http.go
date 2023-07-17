@@ -11,6 +11,7 @@ import (
 
 	"git.teqnological.asia/teq-go/teq-echo/config"
 	"git.teqnological.asia/teq-go/teq-echo/delivery/http/book"
+	"git.teqnological.asia/teq-go/teq-echo/delivery/http/borrow"
 	"git.teqnological.asia/teq-go/teq-echo/delivery/http/example"
 	"git.teqnological.asia/teq-go/teq-echo/delivery/http/healthcheck"
 	"git.teqnological.asia/teq-go/teq-echo/delivery/http/user"
@@ -59,9 +60,11 @@ func NewHTTPHandler(useCase *usecase.UseCase) *echo.Echo {
 	healthcheck.Init(e.Group("/health-check"))
 
 	// APIs
+	e.Use(authMiddleware)
 	api := e.Group("/api")
-	user.Init(api.Group("/users"), useCase)
 	example.Init(api.Group("/examples"), useCase)
+	user.Init(api.Group("/users"), useCase)
 	book.Init(api.Group("/books"), useCase)
+	borrow.Init(api.Group("/borrows"), useCase)
 	return e
 }
