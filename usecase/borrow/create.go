@@ -39,18 +39,17 @@ func (u *UseCase) Create(
 	var bookCurrent model.Book
 	result := mysql.GetDB().Transaction(func(tx *gorm.DB) error {
 		// Kiểm tra số lượng sách đang mượn của người dùng
-		userID := req.UserID // ID của người dùng
+		userID := req.UserID
 		var borrowings []model.Borrow
 		if err := tx.Where("user_id = ? AND return_date IS NULL", userID).Find(&borrowings).Error; err != nil {
 			return err
 		}
 		if len(borrowings) >= 3 {
 			return errors.New("người dùng đã mượn đủ số lượng sách tối đa (3 cuốn)")
-			// return fmt.Errorf("người dùng đã mượn đủ số lượng sách tối đa (3 cuốn)")
 		}
 
 		// Kiểm tra available_quantity của sách
-		bookID := req.BookID // ID của sách
+		bookID := req.BookID
 		if err := tx.Where("id = ?", bookID).First(&bookCurrent).Error; err != nil {
 			return err
 		}
@@ -63,7 +62,6 @@ func (u *UseCase) Create(
 		for _, borrowing := range borrowings {
 			// Kiểm tra nếu đã quá 2 tuần từ ngày mượn
 			if time.Now().Sub(borrowing.BorrowDate).Hours() > 14*24 {
-				// return fmt.Errorf("bạn có sách quá hạn trả")
 				return errors.New("bạn có sách quá hạn trả, vui lòng trả sách trước khi mượn tiếp")
 			}
 		}
@@ -72,8 +70,8 @@ func (u *UseCase) Create(
 	})
 
 	if result != nil {
-		fmt.Println("Bạn không đủ tiêu chí mượn sách: ", result)
-		return &presenter.BorrowResponseWrapper{Borrow: &model.Borrow{}}, nil
+		err := fmt.Sprintf("Không thể mượn sách:%s", result)
+		return nil, myerror.ErrExampleCreate(errors.New(err))
 	}
 
 	//
