@@ -158,5 +158,17 @@ func (p *pgRepository) Delete(ctx context.Context, data *model.Borrow, unscoped 
 		db = db.Unscoped()
 	}
 
+	if err := updateAvailableQuantity(db, data.BookID); err != nil {
+		return err
+	}
+
 	return db.Delete(&data).Error
+}
+
+func updateAvailableQuantity(db *gorm.DB, bookID int64) error {
+	if err := db.Table("books").Where("id = ?", bookID).UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", 1)).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
