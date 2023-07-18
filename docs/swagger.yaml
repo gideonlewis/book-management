@@ -1,5 +1,49 @@
 basePath: /api
 definitions:
+  model.Book:
+    properties:
+      author:
+        type: string
+      available_quantity:
+        type: integer
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      id:
+        type: integer
+      price:
+        type: integer
+      title:
+        type: string
+      total_quantity:
+        type: integer
+      updated_at:
+        type: string
+      updated_by:
+        type: integer
+    type: object
+  model.Borrow:
+    properties:
+      book_id:
+        type: integer
+      borrow_date:
+        type: string
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      id:
+        type: integer
+      return_date:
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   model.Example:
     properties:
       created_at:
@@ -15,9 +59,79 @@ definitions:
       updated_by:
         type: integer
     type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      created_by:
+        type: integer
+      email:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      join_date:
+        type: string
+      name:
+        type: string
+      team:
+        type: string
+      updated_at:
+        type: string
+      updated_by:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  payload.CreateBookRequest:
+    properties:
+      author:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+    type: object
+  payload.CreateBorrowRequest:
+    properties:
+      book_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   payload.CreateExampleRequest:
     properties:
       name:
+        type: string
+    type: object
+  payload.CreateUserRequest:
+    properties:
+      email:
+        type: string
+      gender:
+        type: string
+      join_date:
+        type: string
+      name:
+        type: string
+      team:
+        type: string
+      user_name:
+        type: string
+    type: object
+  payload.UpdateBookRequest:
+    properties:
+      author:
+        type: string
+      price:
+        type: integer
+      title:
+        type: string
+    type: object
+  payload.UpdateBorrowRequest:
+    properties:
+      return_date:
         type: string
     type: object
   payload.UpdateExampleRequest:
@@ -25,10 +139,41 @@ definitions:
       name:
         type: string
     type: object
+  payload.UpdateUserRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  presenter.BookResponseWrapper:
+    properties:
+      book:
+        $ref: '#/definitions/model.Book'
+    type: object
+  presenter.BorrowResponseWrapper:
+    properties:
+      borrow:
+        $ref: '#/definitions/model.Borrow'
+    type: object
   presenter.ExampleResponseWrapper:
     properties:
       example:
         $ref: '#/definitions/model.Example'
+    type: object
+  presenter.ListBookResponseWrapper:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/model.Book'
+        type: array
+      meta: {}
+    type: object
+  presenter.ListBorrowResponseWrapper:
+    properties:
+      borrows:
+        items:
+          $ref: '#/definitions/model.Borrow'
+        type: array
+      meta: {}
     type: object
   presenter.ListExampleResponseWrapper:
     properties:
@@ -38,12 +183,281 @@ definitions:
         type: array
       meta: {}
     type: object
+  presenter.ListUserResponseWrapper:
+    properties:
+      meta: {}
+      users:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  presenter.UserResponseWrapper:
+    properties:
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
 info:
   contact: {}
   description: Transaction API.
   title: Example API
   version: "1.0"
 paths:
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: Get List Book by Params
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.ListBookResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get Book
+      tags:
+      - Book
+    post:
+      consumes:
+      - application/json
+      description: Create a Book
+      parameters:
+      - description: Book info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/payload.CreateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.BookResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Create Book
+      tags:
+      - Book
+  /books/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Book by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - AuthToken: []
+      summary: Delete an Book
+      tags:
+      - Book
+    get:
+      consumes:
+      - application/json
+      description: Get book by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.BookResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get an book
+      tags:
+      - Book
+    put:
+      consumes:
+      - application/json
+      description: Update a Book by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Book info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/payload.UpdateBookRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.BookResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Update Book
+      tags:
+      - Book
+  /books/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all Book by unscoped
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.ListBookResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get Book
+      tags:
+      - Book
+  /borrows:
+    get:
+      consumes:
+      - application/json
+      description: Get List Borrow by Params
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.ListBorrowResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: GetBorrow
+      tags:
+      - Borrow
+    post:
+      consumes:
+      - application/json
+      description: Create a Borrow
+      parameters:
+      - description: Borrow info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/payload.CreateBorrowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.BorrowResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Create Borrow
+      tags:
+      - Borrow
+  /borrows/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an Borrow by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - AuthToken: []
+      summary: Delete Borrow
+      tags:
+      - Borrow
+    get:
+      consumes:
+      - application/json
+      description: Get an Borrow by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.BorrowResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get Borrow
+      tags:
+      - Borrow
+    put:
+      consumes:
+      - application/json
+      description: Update an Borrow by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Borrow info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/payload.UpdateBorrowRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.BorrowResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Update Borrow
+      tags:
+      - Borrow
+  /borrows/all:
+    get:
+      consumes:
+      - application/json
+      description: Get All Borrow
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.ListBorrowResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get Borrow
+      tags:
+      - Borrow
   /examples:
     get:
       consumes:
@@ -64,7 +478,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: create a User
+      description: create a example
       parameters:
       - description: Example info
         in: body
@@ -81,7 +495,7 @@ paths:
             $ref: '#/definitions/presenter.ExampleResponseWrapper'
       security:
       - AuthToken: []
-      summary: Create User
+      summary: Create example
       tags:
       - Example
   /examples/{id}:
@@ -155,6 +569,134 @@ paths:
       summary: Update an example
       tags:
       - Example
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get List User by params
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.ListUserResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get User
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: Create a User
+      parameters:
+      - description: User info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/payload.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.UserResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Create User
+      tags:
+      - User
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an User by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      security:
+      - AuthToken: []
+      summary: Delete User
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Get an User by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.UserResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get User
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update an User by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User info
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/payload.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.UserResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Update User
+      tags:
+      - User
+  /users/all:
+    get:
+      consumes:
+      - application/json
+      description: Get All User
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/presenter.ListUserResponseWrapper'
+      security:
+      - AuthToken: []
+      summary: Get User
+      tags:
+      - User
 schemes:
 - http
 - https

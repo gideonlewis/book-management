@@ -11,14 +11,14 @@ import (
 
 // Create Borrow
 // @Summary Create Borrow
-// @Description create a Borrow
-// @Tags Example
+// @Description Create a Borrow
+// @Tags Borrow
 // @Accept  json
 // @Produce json
 // @Security AuthToken
-// @Param req body payload.CreateExampleRequest true "Example info"
-// @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples [post] .
+// @Param req body payload.CreateBorrowRequest true "Borrow info"
+// @Success 200 {object} presenter.BorrowResponseWrapper
+// @Router /borrows [post] .
 func (r *Route) Create(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}

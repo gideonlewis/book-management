@@ -47,21 +47,22 @@ func NewHTTPHandler(useCase *usecase.UseCase) *echo.Echo {
 		},
 	}))
 	//ping - pong
-	e.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!\n")
-	})
+	e.GET("/ping", echoSwagger.WrapHandler)
 
 	// API docs
 	if !config.GetConfig().Stage.IsProd() {
 		e.GET("/docs/*", echoSwagger.WrapHandler)
 	}
 
+	// test swagger
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	// Health check
 	healthcheck.Init(e.Group("/health-check"))
 
 	// APIs
-	e.Use(authMiddleware)
 	api := e.Group("/api")
+	api.Use(authMiddleware)
 	example.Init(api.Group("/examples"), useCase)
 	user.Init(api.Group("/users"), useCase)
 	book.Init(api.Group("/books"), useCase)

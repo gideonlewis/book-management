@@ -10,14 +10,14 @@ import (
 )
 
 // GetList Users
-// @Summary Get an User
-// @Description Get User by id
+// @Summary Get User
+// @Description Get List User by params
 // @Tags User
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Success 200 {object} presenter.ListUserResponseWrapper
-// @Router /Users [get] .
+// @Router /users [get] .
 func (r *Route) GetList(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}

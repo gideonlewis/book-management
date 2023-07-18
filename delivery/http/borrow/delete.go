@@ -10,16 +10,15 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/payload"
 )
 
-// Delete Borrow by id
-// @Summary Delete an Borrow
-// @Description Delete Borrow by id
+// @Summary Delete Borrow
+// @Description Delete an Borrow by id
 // @Tags Borrow
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Param id path int true "id"
 // @Success 200
-// @Router /Borrows/{id} [delete] .
+// @Router /borrows/{id} [delete] .
 func (r *Route) Delete(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

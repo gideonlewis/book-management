@@ -9,15 +9,14 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// GetList Borrows
-// @Summary Get an Borrow
-// @Description Get Borrow by id
+// @Summary GetBorrow
+// @Description Get List Borrow by Params
 // @Tags Borrow
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Success 200 {object} presenter.ListBorrowResponseWrapper
-// @Router /Borrows [get] .
+// @Router /borrows [get] .
 func (r *Route) GetList(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}

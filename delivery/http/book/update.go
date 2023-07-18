@@ -11,9 +11,8 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// Update Book by id
-// @Summary Update an Book
-// @Description Update Book by id
+// @Summary Update Book
+// @Description Update a Book by id
 // @Tags Book
 // @Accept json
 // @Produce json
@@ -21,7 +20,7 @@ import (
 // @Param id path int true "id"
 // @Param req body payload.UpdateBookRequest true "Book info"
 // @Success 200 {object} presenter.BookResponseWrapper
-// @Router /Books/{id} [put] .
+// @Router /books/{id} [put] .
 func (r *Route) Update(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

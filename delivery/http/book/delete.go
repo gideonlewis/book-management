@@ -19,7 +19,7 @@ import (
 // @Security AuthToken
 // @Param id path int true "id"
 // @Success 200
-// @Router /Books/{id} [delete] .
+// @Router /books/{id} [delete] .
 func (r *Route) Delete(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

@@ -14,7 +14,7 @@ proto:
 	@protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/teq.proto
 
 swagger:
-	@@hash swag 2>/dev/null || GO111MODULE=off go get -u github.com/swaggo/swag/cmd/swag
+	@@hash swag 2>/dev/null || GO111MODULE=off go get -u github.com/swaggo/swag/cmd/swag@latest
 	swag init -g cmd/main.go --parseDependency --parseInternal --parseDepth 2
 
 run:

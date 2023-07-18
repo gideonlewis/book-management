@@ -10,14 +10,14 @@ import (
 )
 
 // GetList Borrows
-// @Summary Get an Borrow
-// @Description Get Borrow by id
+// @Summary Get Borrow
+// @Description Get All Borrow
 // @Tags Borrow
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Success 200 {object} presenter.ListBorrowResponseWrapper
-// @Router /Borrows [get] .
+// @Router /borrows/all [get] .
 func (r *Route) GetAll(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}

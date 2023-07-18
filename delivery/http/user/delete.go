@@ -10,16 +10,15 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/payload"
 )
 
-// Delete User by id
-// @Summary Delete an User
-// @Description Delete User by id
+// @Summary Delete User
+// @Description Delete an User by id
 // @Tags User
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Param id path int true "id"
 // @Success 200
-// @Router /Users/{id} [delete] .
+// @Router /users/{id} [delete] .
 func (r *Route) Delete(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

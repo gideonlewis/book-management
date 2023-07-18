@@ -11,9 +11,8 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// Update Borrow by id
-// @Summary Update an Borrow
-// @Description Update Borrow by id
+// @Summary Update Borrow
+// @Description Update an Borrow by id
 // @Tags Borrow
 // @Accept json
 // @Produce json
@@ -21,7 +20,7 @@ import (
 // @Param id path int true "id"
 // @Param req body payload.UpdateBorrowRequest true "Borrow info"
 // @Success 200 {object} presenter.BorrowResponseWrapper
-// @Router /Borrows/{id} [put] .
+// @Router /borrows/{id} [put] .
 func (r *Route) Update(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

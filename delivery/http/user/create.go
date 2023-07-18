@@ -11,14 +11,14 @@ import (
 
 // Create User
 // @Summary Create User
-// @Description create a User
-// @Tags Example
+// @Description Create a User
+// @Tags User
 // @Accept  json
 // @Produce json
 // @Security AuthToken
-// @Param req body payload.CreateExampleRequest true "Example info"
-// @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples [post] .
+// @Param req body payload.CreateUserRequest true "User info"
+// @Success 200 {object} presenter.UserResponseWrapper
+// @Router /users [post] .
 func (r *Route) Create(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}

@@ -11,16 +11,15 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// GetByID example by id
-// @Summary Get an example
-// @Description Get example by id
-// @Tags Example
+// @Summary Get User
+// @Description Get an User by id
+// @Tags User
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Param id path int true "id"
-// @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples/{id} [get] .
+// @Success 200 {object} presenter.UserResponseWrapper
+// @Router /users/{id} [get] .
 func (r *Route) GetByID(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

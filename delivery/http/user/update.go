@@ -11,9 +11,8 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// Update User by id
-// @Summary Update an User
-// @Description Update User by id
+// @Summary Update User
+// @Description Update an User by id
 // @Tags User
 // @Accept json
 // @Produce json
@@ -21,7 +20,7 @@ import (
 // @Param id path int true "id"
 // @Param req body payload.UpdateUserRequest true "User info"
 // @Success 200 {object} presenter.UserResponseWrapper
-// @Router /Users/{id} [put] .
+// @Router /users/{id} [put] .
 func (r *Route) Update(c echo.Context) error {
 	var (
 		ctx   = &teq.CustomEchoContext{Context: c}

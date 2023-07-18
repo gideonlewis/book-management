@@ -9,16 +9,15 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// Create Book
 // @Summary Create Book
-// @Description create a Book
-// @Tags Example
+// @Description Create a Book
+// @Tags Book
 // @Accept  json
 // @Produce json
 // @Security AuthToken
-// @Param req body payload.CreateExampleRequest true "Example info"
-// @Success 200 {object} presenter.ExampleResponseWrapper
-// @Router /examples [post] .
+// @Param req body payload.CreateBookRequest true "Book info"
+// @Success 200 {object} presenter.BookResponseWrapper
+// @Router /books [post] .
 func (r *Route) Create(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}

@@ -11,15 +11,14 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
-// GetList Books
-// @Summary Get an Book
-// @Description Get Book by id
+// @Summary Get Book
+// @Description Get all Book by unscoped
 // @Tags Book
 // @Accept json
 // @Produce json
 // @Security AuthToken
 // @Success 200 {object} presenter.ListBookResponseWrapper
-// @Router /Books [get] .
+// @Router /books/all [get] .
 func (r *Route) GetAll(c echo.Context) error {
 	var (
 		ctx  = &teq.CustomEchoContext{Context: c}
