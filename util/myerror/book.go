@@ -52,7 +52,7 @@ func ErrBookNotFound() teqerror.TeqError {
 		Raw:       nil,
 		HTTPCode:  http.StatusNotFound,
 		ErrorCode: "10004",
-		Message:   "Not found.",
+		Message:   "Book not found.",
 		IsSentry:  false,
 	}
 }

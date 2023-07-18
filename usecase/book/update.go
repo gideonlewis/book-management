@@ -2,7 +2,6 @@ package book
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"git.teqnological.asia/teq-go/teq-pkg/teq"
@@ -37,7 +36,6 @@ func (u *UseCase) validateUpdate(ctx context.Context, req *payload.UpdateBookReq
 	}
 
 	myBook.UpdatedBy = teq.Int64(1)
-	fmt.Println(myBook)
 	return myBook, nil
 }
 

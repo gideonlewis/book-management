@@ -2,7 +2,6 @@ package borrow
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -13,7 +12,6 @@ import (
 )
 
 func (u *UseCase) GetByID(ctx context.Context, req *payload.GetBorrowByIDRequest) (*presenter.BorrowResponseWrapper, error) {
-	fmt.Println("id", req.ID)
 	myBorrow, err := u.BorrowRepo.GetByID(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

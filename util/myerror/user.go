@@ -52,7 +52,7 @@ func ErrUserNotFound() teqerror.TeqError {
 		Raw:       nil,
 		HTTPCode:  http.StatusNotFound,
 		ErrorCode: "10004",
-		Message:   "Not found.",
+		Message:   "User not found.",
 		IsSentry:  false,
 	}
 }

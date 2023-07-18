@@ -47,9 +47,7 @@ type GetAllBorrowRequest struct {
 
 type UpdateBorrowRequest struct {
 	ID         int64   `json:"-"`
-	UserID     *int64  `json:"user_id"`
-	BookID     *int64  `json:"book_id"`
-	BorrowDate *string `json:"borrower_date"`
+	ReturnDate *string `json:"return_date"`
 }
 
 type DeleteBorrowRequest struct {
