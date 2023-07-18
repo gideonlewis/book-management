@@ -7,8 +7,9 @@ import (
 )
 
 type CreateBorrowRequest struct {
-	UserID *int64 `json:"user_id"`
-	BookID *int64 `json:"book_id"`
+	UserID   *int64 `json:"user_id"`
+	BookID   *int64 `json:"book_id"`
+	Quantity *int64 `json:"quantity"`
 }
 
 type GetBorrowByIDRequest struct {

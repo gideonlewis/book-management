@@ -34,7 +34,7 @@ func (b borrowingOverdueCheck) Run() {
 	c := cron.New()
 
 	// _, err := c.AddFunc("0 8 * * *", b.callBorrowingOverdueCheck)
-	_, err := c.AddFunc("@every 10s", b.callBorrowingOverdueCheck)
+	_, err := c.AddFunc("@every 100s", b.callBorrowingOverdueCheck)
 	if err != nil {
 		teqlogger.GetLogger().Fatal("failed to schedule borrowing overdue check")
 		teqsentry.Fatal(errors.Wrap(err, "failed to schedule borrowing overdue check"))

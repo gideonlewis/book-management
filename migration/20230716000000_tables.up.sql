@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS borrows
     `id`                    INT   NOT NULL AUTO_INCREMENT,
     `user_id`           INT NOT NULL,
     `book_id`               INT NOT NULL,
+    `quantity` INT NOT NULL,
     `borrow_date`       TIMESTAMP NOT NULL,
     `return_date`       TIMESTAMP    NULL,
     `created_by`            INT             NOT NULL,

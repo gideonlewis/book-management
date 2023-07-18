@@ -8,6 +8,7 @@ import (
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
+	"git.teqnological.asia/teq-go/teq-echo/payload"
 	"gorm.io/gorm"
 )
 
@@ -19,19 +20,19 @@ type pgRepository struct {
 	getDB func(ctx context.Context) *gorm.DB
 }
 
-func (p *pgRepository) Create(ctx context.Context, data *model.Borrow) error {
+func (p *pgRepository) CheckConditions(ctx context.Context, req *payload.CreateBorrowRequest) error {
 	var bookCurr *model.Book
 	result := p.getDB(ctx).Transaction(func(tx *gorm.DB) error {
 		// check quantity user is borrowed
 		var borrowings []model.Borrow
-		if err := tx.Where("user_id = ? AND return_date IS NULL", data.UserID).Find(&borrowings).Error; err != nil {
+		if err := tx.Where("user_id = ? AND return_date IS NULL", req.UserID).Find(&borrowings).Error; err != nil {
 			return err
 		}
 		if len(borrowings) >= 3 {
 			return errors.New("người dùng đã mượn đủ số lượng sách tối đa (3 cuốn)")
 		}
 		// check available_quantity
-		if err := tx.Where("id = ?", data.BookID).First(&bookCurr).Error; err != nil {
+		if err := tx.Where("id = ?", req.BookID).First(&bookCurr).Error; err != nil {
 			return err
 		}
 		if bookCurr.AvailableQuantity <= 0 {
@@ -53,12 +54,16 @@ func (p *pgRepository) Create(ctx context.Context, data *model.Borrow) error {
 		return errors.New(err)
 	}
 
+	return nil
+}
+
+func (p *pgRepository) Create(ctx context.Context, data *model.Borrow) error {
 	if err := p.getDB(ctx).Create(data).Error; err != nil {
 		return err
 	}
 
 	// update available_quantity
-	if err := p.getDB(ctx).Table("books").Where("id = ?", data.BookID).UpdateColumn("available_quantity", bookCurr.AvailableQuantity-1).Error; err != nil {
+	if err := p.getDB(ctx).Table("books").Where("id = ?", data.BookID).UpdateColumn("available_quantity", gorm.Expr("available_quantity - ?", data.Quantity)).Error; err != nil {
 		return err
 	}
 
@@ -158,15 +163,15 @@ func (p *pgRepository) Delete(ctx context.Context, data *model.Borrow, unscoped 
 		db = db.Unscoped()
 	}
 
-	if err := updateAvailableQuantity(db, data.BookID); err != nil {
+	if err := updateAvailableQuantity(db, data); err != nil {
 		return err
 	}
 
 	return db.Delete(&data).Error
 }
 
-func updateAvailableQuantity(db *gorm.DB, bookID int64) error {
-	if err := db.Table("books").Where("id = ?", bookID).UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", 1)).Error; err != nil {
+func updateAvailableQuantity(db *gorm.DB, data *model.Borrow) error {
+	if err := db.Table("books").Where("id = ?", data.BookID).UpdateColumn("available_quantity", gorm.Expr("available_quantity + ?", data.Quantity)).Error; err != nil {
 		return err
 	}
 

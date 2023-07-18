@@ -45,8 +45,7 @@ func (g *GetListUserRequest) Format() {
 }
 
 type GetAllUserRequest struct {
-	Unscoped bool   `json:"unscoped"`
-	Un       string `json:"un"`
+	Unscoped bool `json:"unscoped" query:"unscoped"`
 }
 
 type UpdateUserRequest struct {

@@ -2,8 +2,6 @@ package user
 
 import (
 	"context"
-	"errors"
-	"regexp"
 
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
@@ -19,27 +17,6 @@ type pgRepository struct {
 }
 
 func (p *pgRepository) Create(ctx context.Context, data *model.User) error {
-	var errMap = make(map[string]string)
-	if !checkEmailDomain(data.Email) {
-		errMap["email-domain"] = "Email must be a valid domain: @teqnological.asia | @gmail.com"
-	}
-
-	if isEmailExisted(p.getDB(ctx), data.Email) {
-		errMap["email-existed"] = "Email already existed,please try email different"
-	}
-
-	if isUsernameExisted(p.getDB(ctx), data.UserName) {
-		errMap["user-name"] = "Username already exists,please try user_name different"
-	}
-
-	if len(errMap) != 0 {
-		var errStr string
-		for _, v := range errMap {
-			errStr += v + ". "
-		}
-		return errors.New(errStr)
-	}
-
 	return p.getDB(ctx).Create(data).Error
 }
 
@@ -168,23 +145,4 @@ func updateAvailableQuantity(db *gorm.DB, bookID int64) error {
 	}
 
 	return nil
-}
-
-func checkEmailDomain(email string) bool {
-	pattern := `^[a-zA-Z0-9_.+-]+@(teqnological\.asia|gmail\.com)$`
-	match, _ := regexp.MatchString(pattern, email)
-
-	return match
-}
-
-func isUsernameExisted(db *gorm.DB, username string) bool {
-	var count int64
-	db.Table("users").Where("user_name = ?", username).Count(&count)
-	return count > 0
-}
-
-func isEmailExisted(db *gorm.DB, email string) bool {
-	var count int64
-	db.Table("users").Where("email = ?", email).Count(&count)
-	return count > 0
 }
