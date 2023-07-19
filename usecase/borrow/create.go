@@ -21,7 +21,7 @@ func (u *UseCase) validateCreate(ctx context.Context, req *payload.CreateBorrowR
 	}
 
 	if err := u.BorrowRepo.CheckConditions(ctx, req); err != nil {
-		return err
+		return myerror.ErrBorrowInvalidParam(err.Error())
 	}
 
 	user, err := u.UserRepo.GetByID(ctx, *req.UserID)
@@ -63,6 +63,7 @@ func (u *UseCase) Create(
 		return nil, err
 	}
 
+	fmt.Println("--------------------------------------------------------------------------------")
 	borrowDate, err := time.Parse(DAY_STANDARD, time.Now().Format(time.RFC3339))
 	if err != nil {
 		return nil, myerror.ErrBorrowCreate(err)

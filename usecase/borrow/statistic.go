@@ -34,16 +34,51 @@ func (u *UseCase) Statistic(ctx context.Context, req *payload.StatisticBorrowReq
 		return nil, myerror.ErrBorrowInvalidParam("invalid from * to date")
 	}
 
-	bookStatistic, err := u.BorrowRepo.Statistic(ctx, req)
+	bookStatistics, err := u.BorrowRepo.Statistic(ctx, req)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, myerror.ErrBorrowNotFound()
+			return nil, myerror.ErrBorrowInvalidParam(err.Error())
 		}
 
-		return nil, myerror.ErrBorrowGet(err)
+		return nil, myerror.ErrBorrowInvalidParam(err.Error())
 	}
 
-	return &presenter.BorrowStatisticResponseWrapper{Books: bookStatistic, Meta: map[string]interface{}{
-		"total": len(bookStatistic),
+	//calculate quantum
+	var totalBorrowed int64
+	for _, statistic := range bookStatistics {
+		totalBorrowed += statistic.Quantity
+	}
+
+	for _, statistic := range bookStatistics[:10] {
+		statistic.Detail = make([]struct {
+			Title    string "json:\"title\""
+			Quantity int64  "json:\"quantity\""
+		}, 1)
+
+		statistic.Detail[0].Title = statistic.Title
+		statistic.Detail[0].Quantity = statistic.Quantity
+	}
+
+	other := bookStatistics[11]
+	other.Detail = make([]struct {
+		Title    string "json:\"title\""
+		Quantity int64  "json:\"quantity\""
+	}, len(bookStatistics)-10)
+
+	other.ID = 0
+	other.Title = "Other"
+	for i, statistic := range bookStatistics[10:] {
+		other.Quantity += statistic.Quantity
+		other.NumOfBorrowed += statistic.NumOfBorrowed
+		other.Detail[i].Title = statistic.Title
+		other.Detail[i].Quantity = statistic.Quantity
+	}
+
+	for _, statistic := range bookStatistics {
+		statistic.Quantum = float64(statistic.Quantity) / float64(totalBorrowed)
+	}
+
+	return &presenter.BorrowStatisticResponseWrapper{Statistics: bookStatistics, Meta: map[string]interface{}{
+		"total": len(bookStatistics),
 	}}, nil
 }

@@ -8,13 +8,17 @@ type Statistic struct {
 	ID            int64   `json:"id"`
 	Title         string  `json:"title"`
 	NumOfBorrowed int64   `json:"num_of_borrowed"`
-	Quantity      *int64  `json:"quantity"` // total quantity book borrowed have ID
-	Quantum       float64 `json:"quantum"`  // quantity / total book borrowed
+	Quantity      int64   `json:"quantity"`
+	Quantum       float64 `json:"quantum"`
+	Detail        []struct {
+		Title    string `json:"title"`
+		Quantity int64  `json:"quantity"`
+	} `gorm:"-" json:"detail"`
 }
 
 type BorrowStatisticResponseWrapper struct {
-	Books []*Statistic `json:"books"`
-	Meta  interface{}  `json:"meta"`
+	Statistics []*Statistic `json:"statistics"`
+	Meta       interface{}  `json:"meta"`
 }
 
 type BorrowResponseWrapper struct {

@@ -27,28 +27,20 @@ func (p *pgRepository) Statistic(ctx context.Context, req *payload.StatisticBorr
 		db.Unscoped()
 	}
 
-	var statistics []*presenter.Statistic
+	var borrowStatistics []*presenter.Statistic
 	err := db.
 		Table("borrows").
 		Joins("JOIN books ON borrows.book_id = books.id").
 		Select("books.id, books.title, COUNT(*) as num_of_borrowed, SUM(borrows.quantity) as quantity").
 		Group("books.id").
-		Find(&statistics).Error
+		Order("quantity desc").
+		Find(&borrowStatistics).Error
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to scan borrow statistics: %s", err)
 	}
 
-	var totalBorrowed int64
-	for _, statistic := range statistics {
-		totalBorrowed += *statistic.Quantity
-	}
-
-	for _, statistic := range statistics {
-		statistic.Quantum = float64(*statistic.Quantity) / float64(totalBorrowed)
-	}
-
-	return statistics, nil
+	return borrowStatistics, nil
 }
 
 func (p *pgRepository) CheckConditions(ctx context.Context, req *payload.CreateBorrowRequest) error {
