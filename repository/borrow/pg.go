@@ -26,43 +26,26 @@ func (p *pgRepository) Statistic(ctx context.Context, req *payload.StatisticBorr
 	if req.Unscoped {
 		db.Unscoped()
 	}
-	// get id & title all book
+
 	var statistics []*presenter.Statistic
-	if err := db.Table("books").Select("ID", "Title").Where("created_at BETWEEN ? AND ?", *req.From, *req.To).Find(&statistics).Error; err != nil {
-		return []*presenter.Statistic{}, err
+	err := db.
+		Table("borrows").
+		Joins("JOIN books ON borrows.book_id = books.id").
+		Select("books.id, books.title, COUNT(*) as num_of_borrowed, SUM(borrows.quantity) as quantity").
+		Group("books.id").
+		Find(&statistics).Error
+
+	if err != nil {
+		return nil, err
 	}
 
-	// calculate num_of_borrowed & total_borrowed
-	for _, statistic := range statistics {
-		result := db.Transaction(func(tx *gorm.DB) error {
-			if err := tx.Table("borrows").Where("book_id = ?", statistic.ID).Count(&statistic.NumOfBorrowed).Error; err != nil {
-				return err
-			}
-
-			if err := tx.Table("borrows").Select("SUM(quantity) AS quantity").Where("book_id = ?", statistic.ID).Scan(&statistic.Quantity).Error; err != nil {
-				return err
-			}
-
-			return nil
-		})
-
-		if result != nil {
-			return []*presenter.Statistic{}, result
-		}
-	}
-	// total borrowed
 	var totalBorrowed int64
-	if err := db.Table("borrows").Select("SUM(quantity) AS quantity").Scan(&totalBorrowed).Error; err != nil {
-		return []*presenter.Statistic{}, err
+	for _, statistic := range statistics {
+		totalBorrowed += *statistic.Quantity
 	}
 
-	// calculate quantum by total_book_borrowed
 	for _, statistic := range statistics {
-		if statistic.Quantity == nil {
-			statistic.Quantum = 0
-		} else {
-			statistic.Quantum = float64(*statistic.Quantity) / float64(totalBorrowed)
-		}
+		statistic.Quantum = float64(*statistic.Quantity) / float64(totalBorrowed)
 	}
 
 	return statistics, nil
