@@ -28,7 +28,7 @@ func (p *pgRepository) Statistic(ctx context.Context, req *payload.StatisticBorr
 	}
 	// get id & title all book
 	var statistics []*presenter.Statistic
-	if err := db.Table("books").Select("ID", "Title").Find(&statistics).Error; err != nil {
+	if err := db.Table("books").Select("ID", "Title").Where("created_at BETWEEN ? AND ?", *req.From, *req.To).Find(&statistics).Error; err != nil {
 		return []*presenter.Statistic{}, err
 	}
 
@@ -61,40 +61,13 @@ func (p *pgRepository) Statistic(ctx context.Context, req *payload.StatisticBorr
 		if statistic.Quantity == nil {
 			statistic.Quantum = 0
 		} else {
-			statistic.Quantum = float64(*statistic.Quantity / totalBorrowed)
+			quantity := float64(*statistic.Quantity)
+			statistic.Quantum = quantity / float64(totalBorrowed)
 		}
 	}
 
 	return statistics, nil
 }
-
-// func getBookStatistic(db *gorm.DB, unscoped bool) ([]presenter.Statistic, error) {
-// 	if unscoped {
-// 		db = db.Unscoped()
-// 	}
-
-// 	var statistics []presenter.Statistic
-// 	if err := db.Table("books").Select("ID", "Title").Find(&statistics).Error; err != nil {
-// 		return []presenter.Statistic{}, err
-// 	}
-
-// 	for _, statistic := range statistics {
-// 		if err := db.Table("borrows").Where("book_id = ?", statistic.ID).Count(&statistic.NumOfBorrowed).Error; err != nil {
-// 			return []presenter.Statistic{}, err
-// 		}
-// 	}
-
-// 	var totalBorrowed int64
-// 	if err := db.Table("borrows").Select("quantity").Count(&totalBorrowed).Error; err != nil {
-// 		return []presenter.Statistic{}, err
-// 	}
-
-// 	return statistics
-// }
-
-// func calculateQuantum(db *gorm.DB, bookID string, totalBorrowed int64) float64 {
-// 	if err:= db.Table("")
-// }
 
 func (p *pgRepository) CheckConditions(ctx context.Context, req *payload.CreateBorrowRequest) error {
 	var bookCurr *model.Book
