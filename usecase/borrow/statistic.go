@@ -59,7 +59,7 @@ func (u *UseCase) Statistic(ctx context.Context, req *payload.StatisticBorrowReq
 		statistic.Detail[0].Quantity = statistic.Quantity
 	}
 
-	other := bookStatistics[11]
+	other := bookStatistics[10]
 	other.Detail = make([]struct {
 		Title    string "json:\"title\""
 		Quantity int64  "json:\"quantity\""
