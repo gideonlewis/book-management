@@ -6,8 +6,8 @@ type Statistic struct {
 	ID            int64   `json:"id"`
 	Title         string  `json:"title"`
 	NumOfBorrowed int64   `json:"num_of_borrowed"`
-	Quantity      *int64  `json:"quantity"`
-	Quantum       float64 `json:"quantum"`
+	Quantity      *int64  `json:"quantity"` // total quantity book borrowed have ID
+	Quantum       float64 `json:"quantum"`  // quantity / total book borrowed
 }
 
 type BorrowStatisticResponseWrapper struct {
