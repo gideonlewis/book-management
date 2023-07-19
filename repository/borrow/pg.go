@@ -61,8 +61,7 @@ func (p *pgRepository) Statistic(ctx context.Context, req *payload.StatisticBorr
 		if statistic.Quantity == nil {
 			statistic.Quantum = 0
 		} else {
-			quantity := float64(*statistic.Quantity)
-			statistic.Quantum = quantity / float64(totalBorrowed)
+			statistic.Quantum = float64(*statistic.Quantity) / float64(totalBorrowed)
 		}
 	}
 

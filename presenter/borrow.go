@@ -1,6 +1,8 @@
 package presenter
 
-import "git.teqnological.asia/teq-go/teq-echo/model"
+import (
+	"git.teqnological.asia/teq-go/teq-echo/model"
+)
 
 type Statistic struct {
 	ID            int64   `json:"id"`

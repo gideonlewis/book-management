@@ -43,5 +43,7 @@ func (u *UseCase) Statistic(ctx context.Context, req *payload.StatisticBorrowReq
 		return nil, myerror.ErrBorrowGet(err)
 	}
 
-	return &presenter.BorrowStatisticResponseWrapper{Books: bookStatistic}, nil
+	return &presenter.BorrowStatisticResponseWrapper{Books: bookStatistic, Meta: map[string]interface{}{
+		"total": len(bookStatistic),
+	}}, nil
 }
