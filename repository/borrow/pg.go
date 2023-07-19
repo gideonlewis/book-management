@@ -9,6 +9,7 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
 	"git.teqnological.asia/teq-go/teq-echo/payload"
+	"git.teqnological.asia/teq-go/teq-echo/presenter"
 	"gorm.io/gorm"
 )
 
@@ -19,6 +20,81 @@ func NewPG(getDB func(ctx context.Context) *gorm.DB) Repository {
 type pgRepository struct {
 	getDB func(ctx context.Context) *gorm.DB
 }
+
+func (p *pgRepository) Statistic(ctx context.Context, req *payload.StatisticBorrowRequest) ([]*presenter.Statistic, error) {
+	var db = p.getDB(ctx)
+	if req.Unscoped {
+		db.Unscoped()
+	}
+	// get id & title all book
+	var statistics []*presenter.Statistic
+	if err := db.Table("books").Select("ID", "Title").Find(&statistics).Error; err != nil {
+		return []*presenter.Statistic{}, err
+	}
+
+	// calculate num_of_borrowed & total_borrowed
+	for _, statistic := range statistics {
+		result := db.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Table("borrows").Where("book_id = ?", statistic.ID).Count(&statistic.NumOfBorrowed).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Table("borrows").Select("SUM(quantity) AS quantity").Where("book_id = ?", statistic.ID).Scan(&statistic.Quantity).Error; err != nil {
+				return err
+			}
+
+			return nil
+		})
+
+		if result != nil {
+			return []*presenter.Statistic{}, result
+		}
+	}
+	// total borrowed
+	var totalBorrowed int64
+	if err := db.Table("borrows").Select("SUM(quantity) AS quantity").Scan(&totalBorrowed).Error; err != nil {
+		return []*presenter.Statistic{}, err
+	}
+
+	// calculate quantum by total_book_borrowed
+	for _, statistic := range statistics {
+		if statistic.Quantity == nil {
+			statistic.Quantum = 0
+		} else {
+			statistic.Quantum = float64(*statistic.Quantity / totalBorrowed)
+		}
+	}
+
+	return statistics, nil
+}
+
+// func getBookStatistic(db *gorm.DB, unscoped bool) ([]presenter.Statistic, error) {
+// 	if unscoped {
+// 		db = db.Unscoped()
+// 	}
+
+// 	var statistics []presenter.Statistic
+// 	if err := db.Table("books").Select("ID", "Title").Find(&statistics).Error; err != nil {
+// 		return []presenter.Statistic{}, err
+// 	}
+
+// 	for _, statistic := range statistics {
+// 		if err := db.Table("borrows").Where("book_id = ?", statistic.ID).Count(&statistic.NumOfBorrowed).Error; err != nil {
+// 			return []presenter.Statistic{}, err
+// 		}
+// 	}
+
+// 	var totalBorrowed int64
+// 	if err := db.Table("borrows").Select("quantity").Count(&totalBorrowed).Error; err != nil {
+// 		return []presenter.Statistic{}, err
+// 	}
+
+// 	return statistics
+// }
+
+// func calculateQuantum(db *gorm.DB, bookID string, totalBorrowed int64) float64 {
+// 	if err:= db.Table("")
+// }
 
 func (p *pgRepository) CheckConditions(ctx context.Context, req *payload.CreateBorrowRequest) error {
 	var bookCurr *model.Book

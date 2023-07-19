@@ -14,4 +14,5 @@ type IUseCase interface {
 	GetList(ctx context.Context, req *payload.GetListBorrowRequest) (*presenter.ListBorrowResponseWrapper, error)
 	GetAll(ctx context.Context, req *payload.GetAllBorrowRequest) (*presenter.ListBorrowResponseWrapper, error)
 	Delete(ctx context.Context, req *payload.DeleteBorrowRequest) error
+	Statistic(ctx context.Context, req *payload.StatisticBorrowRequest) (*presenter.BorrowStatisticResponseWrapper, error)
 }

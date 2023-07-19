@@ -6,6 +6,11 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 )
 
+type StatisticBorrowRequest struct {
+	Unscoped bool    `json:"unscoped"`
+	From     *string `json:"from,omitempty" query:"from"`
+	To       *string `json:"to,omitempty" query:"to"`
+}
 type CreateBorrowRequest struct {
 	UserID   *int64 `json:"user_id"`
 	BookID   *int64 `json:"book_id"`

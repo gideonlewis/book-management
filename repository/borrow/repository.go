@@ -6,6 +6,7 @@ import (
 	"git.teqnological.asia/teq-go/teq-echo/codetype"
 	"git.teqnological.asia/teq-go/teq-echo/model"
 	"git.teqnological.asia/teq-go/teq-echo/payload"
+	"git.teqnological.asia/teq-go/teq-echo/presenter"
 )
 
 type Repository interface {
@@ -22,4 +23,5 @@ type Repository interface {
 	) ([]model.Borrow, int64, error)
 	Delete(ctx context.Context, data *model.Borrow, unscoped bool) error
 	CheckConditions(ctx context.Context, data *payload.CreateBorrowRequest) error
+	Statistic(ctx context.Context, data *payload.StatisticBorrowRequest) ([]*presenter.Statistic, error)
 }
